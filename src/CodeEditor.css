@@ -1,0 +1,24 @@
+#codeView {
+  width: 500px;
+  height: 300px;
+  position: absolute;
+  right: 230px;
+  top: 50px;
+  background-color: #e8e8e8;
+  padding: 10px;
+  padding-top: 4px;
+  box-shadow: 0 0 10px #666;
+}
+
+#cvCode {
+  width: 100%;
+  height: 240px;
+}
+
+#codeView h3 {
+  margin: 0;
+}
+
+#codeViewFooter {
+  text-align: right;
+}
