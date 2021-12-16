@@ -12,12 +12,6 @@ code {
     monospace;
 }
 
-#toolBox {
-  position: absolute;
-  left: 0px;
-  top: 250px;
-}
-
 #projectView{
   border-bottom: 1px solid #ccc;
   margin-bottom: 5px;
@@ -26,4 +20,11 @@ code {
 
 #projectView .projectShape {
   padding-left: 20px;
+}
+
+
+#templatesList {
+  border-bottom: 1px solid #ccc;
+ margin-bottom: 5px;
+  padding-bottom: 5px;
 }

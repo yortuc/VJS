@@ -1,6 +1,19 @@
 import React from 'react';
 import './PropInspector.css';
 import Color from "./lib/Color"
+import { func } from 'prop-types';
+
+
+function PropList(name, values){
+   return PropRow(key, 
+      (<>
+        { values.map(value => 
+            PropInspector(
+              value, null, null, ()=> {console.log("propval changed")})
+          )
+        }
+      </>))
+}
 
 
 function PropRow(name, value){
@@ -48,7 +61,6 @@ function ColorInspector(key, val, onShowCodeClicked, allShapes, onPropValChanged
       onPropValChanged(key, newColor.toCode())
     }}/>)
 }
-
 
 function Other(key, val, type){
   return PropRow(key, 

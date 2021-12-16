@@ -1,3 +1,5 @@
+// standart library to use in the shape codes
+// 
 
 export default {
   range: function(start, end, step=1) {

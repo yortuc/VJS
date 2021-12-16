@@ -5,6 +5,7 @@ import Renderable from "./lib/Renderable"
 import PropInspector from './PropInspector'
 import ProjectView from './ProjectView'
 import CodeEditor from './CodeEditor'
+import TemplatesList from './TemplatesList'
 import Color from './lib/Color'
 import Project from './lib/Project'
 import ShapeCodes from './lib/ShapeCodes'
@@ -17,6 +18,25 @@ project.loadFromLocalStorage()
 
 let selectedObj = null
 let codeVisible = false
+
+function propValChanged(key, newVal){  
+  // replace code.
+  // this will be replaced with a language parser!
+  const findRegex = new RegExp("me." + key + " = .*");
+  const replace = "me." + key + " = " + newVal
+  selectedObj.code.code = selectedObj.code.code.replace(findRegex, replace)
+  
+  // set the prop value of the instance
+  // or, should we init the object again?
+  selectedObj[key] = eval(newVal)
+
+  // update project source code
+  // is it going to be slow?
+  project.updateProjectCode()
+
+  renderProject()
+  renderUI()
+}
 
 function evaluateShape(shape){
   try{
@@ -31,6 +51,7 @@ function evaluateShape(shape){
 
 function initShape(shape){
   shape.init()
+
   // if this is a project then init shapes 
   if(shape.shapes){
     shape.shapes
@@ -38,6 +59,16 @@ function initShape(shape){
           evaluateShape(s)
           s.init()
         })
+  }
+
+  // if it has templates, init templates
+  if(shape.templates){
+    shape.templates = shape.templates.map(s => {
+        const shape1 = new Renderable(s)
+        evaluateShape(shape1)
+        shape1.init()
+        return shape1
+      })
   }
 }
 
@@ -50,12 +81,13 @@ function applyCode(code){
   renderUI()
 }
 
-function Add(){
-  const name = "Shape" + (project.shapes.length + 1).toString()
-  const shape1 = new Renderable(ShapeCodes.rectangle(400, 180, 50, 50, name))
+function Add(template){
+  const name = template.name + (project.shapes.length + 1).toString()
+  const shape1 = new Renderable(template.code.code)
   selectedObj = shape1
   evaluateShape(shape1)
   initShape(shape1)
+  propValChanged("name", `"${name}"`)
 
   // add to project instance 
   // or, should we init the project ?
@@ -84,25 +116,6 @@ function selectionChanged(s) {
   renderUI()
 }
 
-function propValChanged(key, newVal){  
-  // replace code.
-  // this will be replaced with a language parser!
-  const findRegex = new RegExp("me." + key + " = .*");
-  const replace = "me." + key + " = " + newVal
-  selectedObj.code.code = selectedObj.code.code.replace(findRegex, replace)
-  
-  // set the prop value of the instance
-  // or, should we init the object again?
-  selectedObj[key] = eval(newVal)
-
-  // update project source code
-  // is it going to be slow?
-  project.updateProjectCode()
-
-  renderProject()
-  renderUI()
-}
-
 function showCode(code) {
   codeVisible = true
   renderUI()
@@ -118,9 +131,13 @@ function createTemplate(shape){
   // copy code, put it in project.templates 
   // update project code to save
   // project.templates.push()
+  // project
+
+  project.templates.push(selectedObj.code.code)
+  project.updateProjectCode()
+  console.log("save as template")
 }
 
-document.getElementById("addObj").onclick = Add
 
 // init project 
 evaluateShape(project)
@@ -132,6 +149,9 @@ renderProject()
 function renderUI(){
   ReactDOM.render(
     <>
+    <TemplatesList
+        templates={project.templates}
+        onTemplateAddClicked={Add} />
       <ProjectView 
         project={project}
         onSelectionChange={selectionChanged}
