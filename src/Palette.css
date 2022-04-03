@@ -1,0 +1,13 @@
+#palette {
+    left: 50px;
+    top: 50px;
+    position: absolute;
+    width: 100px;
+}
+
+#palette button {
+    width: 50px;
+    height: 50px;
+    float: left;
+    position: relative;
+}

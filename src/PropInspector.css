@@ -1,0 +1,55 @@
+
+.propVal {
+  width: 70px;
+  display: inline-block;
+}
+
+label {
+  display: inline-block;
+  width: 70px;
+  margin-right: 10px;
+  text-align: right;
+}
+
+input[type="text"] {
+  width: 50px;
+}
+
+.pad-left {
+  margin-left: 15px;
+}
+
+.prop-inspector{
+  width: 345px;
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #999;
+}
+
+.prop-inspector .tool-title {
+  color: #999;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.pipeline-tools {
+  margin-top: 10px;
+}
+
+.pipeline-list {
+  border-radius: 7px;
+  background: #eee;
+}
+
+.pipeline-list-item{
+  border-bottom: 1px solid #fff;
+    font-size: 13px;
+    padding: 6px;
+}
+
+.pipeline-list-item input, select{
+  width: 40px;
+}
