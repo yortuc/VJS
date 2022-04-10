@@ -5,6 +5,39 @@ import Cloner from "./operators/Cloner.js";
 import Modifier from "./operators/Modifier.js";
 
 
+function SourceProps({item}){
+  const sourceOp = item.pipeline.operators[0]
+  const opt = sourceOp.opt
+
+  function sourcePropChanged(prop, newVal){
+    Bus.publish("editor/source/propChanged", { sourceOp, prop, newVal })
+  }
+
+  return (
+    <>
+      <b className='tool-title'>Source Props</b>
+      <div className='pipeline-list'>
+        <div className='pipeline-list-item'>
+          <span>
+          <b>Rect</b> 
+          fill: <input type="color" value={opt.fill} onChange={(e) => { sourcePropChanged("fill", e.target.value) }} />
+          rx: <input type="number" value={opt.rx || 0} onChange={(e) => { sourcePropChanged("rx", e.target.value) }}/> 
+          ry: <input type="number" value={opt.ry || 0} onChange={(e) => { sourcePropChanged("ry", e.target.value) }}/>
+          </span>
+        </div>
+
+        <div className='pipeline-list-item'>
+          <span>
+          <b>Stroke</b> 
+          width: <input type="number" value={opt.strokeWidth || 0} onChange={(e) => { sourcePropChanged("strokeWidth", e.target.value) }} />
+          color: <input type="color" value={opt.stroke} onChange={(e) => { sourcePropChanged("stroke", e.target.value) }} />
+          </span>
+        </div>
+      </div>
+    </>
+  )
+}
+
 function PipelineInspector({item}){
   return (
     <>
@@ -15,7 +48,7 @@ function PipelineInspector({item}){
           const opType = p.constructor.name
           return (
             <div key={index} className="pipeline-list-item">
-              {opEditors[opType](p)}
+              {opEditors[opType](p, index)}
               <button style={{'float': 'right'}} onClick={() => Bus.publish("pipeline/remove/flow", {flow: p})}>x</button>
             </div>
           )
@@ -33,7 +66,7 @@ function PipelineInspector({item}){
         </button>
 
         <button onClick={() => Bus.publish("pipeline/rerender", { item })} style={{'float': 'right'}}>
-          <i className="bi bi-arrow-clockwise"></i> Rerender
+          <i className="bi bi-arrow-clockwise"></i>
         </button>
       </div>
     </>
@@ -48,32 +81,40 @@ function IRectInspector(flow){
   return <span><b>Rect</b> Rectangle source. </span>
 }
 
-function ClonerInspector(flow){
+function ClonerInspector(flow, key){
   return (
     <span>
       <b>Cloner</b> 
-      Num clones: <input type="number" value={flow.num} min={2} max={100} onChange={(e) => onFlowPropChange(flow, "num", parseInt(e.target.value))} />
+      Num clones: <input type="number" key={key} value={flow.num} min={2} max={100} onChange={(e) => onFlowPropChange(flow, "num", parseInt(e.target.value))} />
     </span>
   )
 
 }
 
-function ModifierInspector(flow){
+function ModifierInspector(flow, key){
 
   const propControl = (
     <select onChange={(e) => onFlowPropChange(flow, "prop", e.target.value)} value={flow.prop}>
       <option value="top">Top</option>
       <option value="left">Left</option>
+      <option value="angle">Angle</option>
       <option value="opacity">Opacity</option>
     </select>
   )
+
+  const minMaxMap = {
+    top: [0, 800],
+    left: [0, 1200],
+    angle: [0, 360],
+    opacity: [0, 1]
+  }
 
   return (
     <span>
       <b>Modifier</b> 
       Prop: {propControl}
-      Start: <input type="number" min={0} value={flow.start} onChange={(e) => onFlowPropChange(flow, "start", parseInt(e.target.value))} />
-      End: <input type="number" max={1200} value={flow.end} onChange={(e) => onFlowPropChange(flow, "end", parseInt(e.target.value))} />
+      Start: <input type="number" key={key + "_min"} min={minMaxMap[flow.prop][0]} value={flow.start} onChange={(e) => onFlowPropChange(flow, "start", parseInt(e.target.value))} />
+      End: <input type="number" key={key + "_max"} max={minMaxMap[flow.prop][1]} value={flow.end} onChange={(e) => onFlowPropChange(flow, "end", parseInt(e.target.value))} />
     </span>
   )
 }
@@ -113,6 +154,7 @@ function PropInspector({obj}) {
   
   return (
     <div className={"prop-inspector"}>
+      <SourceProps item={obj[0]} />
       <PipelineInspector item={obj[0]} />
     </div>
   )

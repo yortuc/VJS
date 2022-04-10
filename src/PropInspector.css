@@ -25,14 +25,15 @@ input[type="text"] {
   top: 50px;
   right: 50px;
   padding: 10px;
+  padding-top: 0;
   border-radius: 10px;
   box-shadow: 0 0 10px #999;
 }
 
 .prop-inspector .tool-title {
   color: #999;
-  margin-bottom: 10px;
   display: block;
+  margin-top: 12px;
 }
 
 .pipeline-tools {
@@ -52,4 +53,10 @@ input[type="text"] {
 
 .pipeline-list-item input, select{
   width: 40px;
+}
+
+.pipeline-list-item input[type="color"] {
+  border: none;
+  width: 24px;
+  height: 20px;
 }

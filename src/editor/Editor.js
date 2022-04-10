@@ -16,7 +16,9 @@ export default class Editor {
 
     addRect(){
         // add canvas a pipeline with a rectangle source in it
-        this.addPipeline(new Pipeline([ new IRect(200, 200, 40, 40) ]))
+        this.addPipeline(new Pipeline([ 
+            new IRect({left: 200, top: 200, width: 40, height: 40, fill: '#f6b73c'}) 
+        ]))
     }
 
     addPipeline(pipeline){

@@ -42,6 +42,11 @@ export default class PipelineManager {
         Bus.subscribe("pipeline/rerender", ({item}) => 
             this.reRenderPipeline(item.pipeline)
         )
+
+        Bus.subscribe("editor/source/propChanged", ({sourceOp, prop, newVal}) => {
+            sourceOp.opt[prop] = newVal
+            this.reRenderPipeline(sourceOp.pipeline)
+        })
     }
 
     reRenderPipeline(pipeline){
