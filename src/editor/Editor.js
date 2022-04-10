@@ -34,7 +34,8 @@ export default class Editor {
         function changeSelection(obj){
             //Handle the object here 
             const x = canvas.getActiveObject()
-            console.log("selection changed", x)
+            
+            x && console.log("selection changed", x.scaleX, x.scaleY)
 
             Bus.publish("editor/selection/change", x)
         }
@@ -58,6 +59,12 @@ export default class Editor {
 
         canvas.on('object:scaling', (e) => {
             Bus.publish("editor/object/scaled", this.canvas.getActiveObject())
+            console.log("object:scaling", e.target.scaleX, e.target.scaleY)
         });
+
+        canvas.on('object:rotating', (e) => {
+            Bus.publish("editor/object/rotated", this.canvas.getActiveObject())
+            console.log("object:scaling", e.target.scaleX, e.target.scaleY)
+        })
     }
 }

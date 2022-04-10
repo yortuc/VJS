@@ -81,7 +81,8 @@ function ModifierInspector(flow){
 function TransformInspector(flow){
   return (
     <span>
-      <b>Transform</b> x: {flow.x.toFixed(0)} y: {flow.y.toFixed(0)} scaleX: {flow.scaleX.toFixed(0)} scaleY: {flow.scaleY.toFixed(0)} 
+      <b>Transform</b> xy: {flow.x.toFixed(0)}, {flow.y.toFixed(0)} scl: {flow.scaleX.toFixed(2)}, {flow.scaleY.toFixed(2)}
+      angle: {flow.angle.toFixed(1)}
     </span>
   )
 }

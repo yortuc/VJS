@@ -23,11 +23,13 @@ export default class PipelineManager {
         })
 
         function updatePipelineTransform(obj){
-            obj.pipeline.updateTransform(obj.left, obj.top, obj.scaleX, obj.scaleY)
+            obj.pipeline.updateTransform(obj.left, obj.top, obj.scaleX, obj.scaleY, obj.angle)
             Bus.publish("editor/selection/change")
         }
         Bus.subscribe("editor/object/moved", updatePipelineTransform)
         Bus.subscribe("editor/object/scaled", updatePipelineTransform)
+        Bus.subscribe("editor/object/rotated", updatePipelineTransform)
+
 
         Bus.subscribe("editor/flow/propChanged", ({flow, prop, value}) => {
             // update flow prop value

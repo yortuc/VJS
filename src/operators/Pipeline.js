@@ -11,7 +11,7 @@ export default class Pipeline {
       this.operators.push(flow)
     }
 
-    updateTransform(x, y, scaleX, scaleY){
+    updateTransform(x, y, scaleX, scaleY, angle){
       // does pipeline have a transform operator at the end?
       const lastOp = this.operators[this.operators.length - 1]
       if(lastOp.constructor.name === "Transform"){
@@ -19,9 +19,10 @@ export default class Pipeline {
         lastOp.y = y
         lastOp.scaleX = scaleX
         lastOp.scaleY = scaleY
+        lastOp.angle = angle
       }
       else{
-        const newTransform = new Transform(x, y, scaleX, scaleY)
+        const newTransform = new Transform(x, y, scaleX, scaleY, angle)
         newTransform.pipeline = this
         this.operators.push(newTransform)
       }
