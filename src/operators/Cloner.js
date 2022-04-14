@@ -18,6 +18,10 @@ export default class Cloner {
           }
           
           item.clone(function(cloned){
+            cloned.set({
+              selectable: false,
+              evented: false
+            })
             cloneItem(clones.concat([cloned]))
           })
         }

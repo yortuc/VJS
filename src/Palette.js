@@ -9,7 +9,7 @@ export default function Palette() {
         <div id='palette'>
             <button><i className="bi-cursor"></i></button>
             <button onClick={() => Bus.publish("editor/add/rect")}><i className="bi bi-square"></i></button>
-            <button><i className="bi bi-circle"></i></button>
+            <button onClick={() => Bus.publish("editor/add/circle")}><i className="bi bi-circle"></i></button>
             <button><i className="bi bi-hexagon"></i></button>
             <button><i className="bi bi-image"></i></button>
             <button><i className="bi bi-pencil"></i></button>

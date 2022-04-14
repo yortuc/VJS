@@ -2,6 +2,7 @@ import { fabric } from "fabric";
 import Bus from "../Bus.js";
 import Pipeline from "../operators/Pipeline.js";
 import IRect from "../operators/IRect.js";
+import ICircle from "../operators/ICircle.js";
 
 
 export default class Editor {
@@ -10,6 +11,7 @@ export default class Editor {
         this.isObjectMoving  = false
 
         Bus.subscribe("editor/add/rect", this.addRect.bind(this))
+        Bus.subscribe("editor/add/circle", this.addCircle.bind(this))
 
         this.initializeCanvasEvents();
     }
@@ -18,6 +20,13 @@ export default class Editor {
         // add canvas a pipeline with a rectangle source in it
         this.addPipeline(new Pipeline([ 
             new IRect({left: 200, top: 200, width: 40, height: 40, fill: '#f6b73c'}) 
+        ]))
+    }
+
+    addCircle(){
+        // add canvas a pipeline with a rectangle source in it
+        this.addPipeline(new Pipeline([ 
+            new ICircle({left: 200, top: 200, radius: 40, fill: '#f6b73c'}) 
         ]))
     }
 
@@ -34,12 +43,12 @@ export default class Editor {
         const canvas = this.canvas;
 
         function changeSelection(obj){
-            //Handle the object here 
-            const x = canvas.getActiveObject()
-            
-            x && console.log("selection changed", x.scaleX, x.scaleY)
-
-            Bus.publish("editor/selection/change", x)
+            if(obj.selected){
+                Bus.publish("editor/activeobject/selected", obj.selected)
+            }
+            if(obj.deselected){
+                Bus.publish("editor/activeobject/deselected", obj.deselected)
+            }
         }
 
         this.canvas.on({

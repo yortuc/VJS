@@ -5,7 +5,7 @@ import Cloner from "./operators/Cloner.js";
 import Modifier from "./operators/Modifier.js";
 
 
-function SourceProps({item}){
+function SourceProps({ item }){
   const sourceOp = item.pipeline.operators[0]
   const opt = sourceOp.opt
 
@@ -19,18 +19,18 @@ function SourceProps({item}){
       <div className='pipeline-list'>
         <div className='pipeline-list-item'>
           <span>
-          <b>Rect</b> 
-          fill: <input type="color" value={opt.fill} onChange={(e) => { sourcePropChanged("fill", e.target.value) }} />
-          rx: <input type="number" value={opt.rx || 0} onChange={(e) => { sourcePropChanged("rx", e.target.value) }}/> 
-          ry: <input type="number" value={opt.ry || 0} onChange={(e) => { sourcePropChanged("ry", e.target.value) }}/>
+          <b>Rect</b>
+          fill: <input id={"source-fill-color"} type="color" value={opt.fill} onChange={(e) => { sourcePropChanged("fill", e.target.value) }} />
+          rx: <input id={"source-rx"} type="number" value={opt.rx || 0} onChange={(e) => { sourcePropChanged("rx", e.target.value) }}/> 
+          ry: <input id={"source-ry"} type="number" value={opt.ry || 0} onChange={(e) => { sourcePropChanged("ry", e.target.value) }}/>
           </span>
         </div>
 
         <div className='pipeline-list-item'>
           <span>
           <b>Stroke</b> 
-          width: <input type="number" value={opt.strokeWidth || 0} onChange={(e) => { sourcePropChanged("strokeWidth", e.target.value) }} />
-          color: <input type="color" value={opt.stroke} onChange={(e) => { sourcePropChanged("stroke", e.target.value) }} />
+          width: <input id={"source-stroke-width"} type="number" value={opt.strokeWidth || 0} onChange={(e) => { sourcePropChanged("strokeWidth", e.target.value) }} />
+          color: <input id={"source-stroke-color"} type="color" value={opt.stroke} onChange={(e) => { sourcePropChanged("stroke", e.target.value) }} />
           </span>
         </div>
       </div>
@@ -81,11 +81,20 @@ function IRectInspector(flow){
   return <span><b>Rect</b> Rectangle source. </span>
 }
 
+function ICircleInspector(flow){
+  return <span><b>Circle</b> Circle source. </span>
+}
+
 function ClonerInspector(flow, key){
   return (
     <span>
       <b>Cloner</b> 
-      Num clones: <input type="number" key={key} value={flow.num} min={2} max={100} onChange={(e) => onFlowPropChange(flow, "num", parseInt(e.target.value))} />
+      Num clones: 
+      <input 
+        id={`cloner-${key}-num-clones`} 
+        type="number" key={key} value={flow.num} min={2} max={100} 
+        onChange={(e) => onFlowPropChange(flow, "num", parseInt(e.target.value))} 
+      />
     </span>
   )
 
@@ -113,8 +122,8 @@ function ModifierInspector(flow, key){
     <span>
       <b>Modifier</b> 
       Prop: {propControl}
-      Start: <input type="number" key={key + "_min"} min={minMaxMap[flow.prop][0]} value={flow.start} onChange={(e) => onFlowPropChange(flow, "start", parseInt(e.target.value))} />
-      End: <input type="number" key={key + "_max"} max={minMaxMap[flow.prop][1]} value={flow.end} onChange={(e) => onFlowPropChange(flow, "end", parseInt(e.target.value))} />
+      Start: <input id={`modifier-${key}-start`} type="number" key={key + "_min"} min={minMaxMap[flow.prop][0]} value={flow.start} onChange={(e) => onFlowPropChange(flow, "start", parseInt(e.target.value))} />
+      End: <input id={`modifier-${key}-end`} type="number" key={key + "_max"} max={minMaxMap[flow.prop][1]} value={flow.end} onChange={(e) => onFlowPropChange(flow, "end", parseInt(e.target.value))} />
     </span>
   )
 }
@@ -130,35 +139,54 @@ function TransformInspector(flow){
 
 const opEditors = {
   IRect: IRectInspector,
+  ICircle: ICircleInspector,
   Cloner: ClonerInspector,
   Modifier: ModifierInspector,
   Transform: TransformInspector
 }
 
+class PropInspector extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      selectedObject: null
+    }
 
-function PropInspector({obj}) {
-  if(!obj || (obj && obj.length === 0)){
-    console.log("no selection")
-    return (
-      <div className={"prop-inspector"}>No selection</div>
-    )
+    Bus.subscribe("editor/activeobject/selected", (selectedObject) => {
+      this.setState({ selectedObject })
+    })
+    Bus.subscribe("editor/activeobject/deselected", (deselectedObject) => {
+      this.setState({ selectedObject: null })
+    })
   }
 
-   if (obj.length > 1) {
+  render() {
+    const obj = this.state.selectedObject
+
+    if(!obj || (obj && obj.length === 0)){
+      console.log("no selection")
+      return (
+        <div className={"prop-inspector"}>No selection</div>
+      )
+    }
+  
+     if (obj.length && obj.length > 1) {
+      return (
+        <div className={"prop-inspector"}>
+          {obj.length} items selected.
+        </div>
+      )
+    }
+    
     return (
       <div className={"prop-inspector"}>
-        {obj.length} items selected.
+        <SourceProps item={obj[0]} />
+        <PipelineInspector item={obj[0]} />
       </div>
     )
   }
-  
-  return (
-    <div className={"prop-inspector"}>
-      <SourceProps item={obj[0]} />
-      <PipelineInspector item={obj[0]} />
-    </div>
-  )
-
 }
+
+
 
 export default PropInspector;
