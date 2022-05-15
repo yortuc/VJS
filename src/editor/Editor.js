@@ -3,6 +3,8 @@ import Bus from "../Bus.js";
 import Pipeline from "../operators/Pipeline.js";
 import IRect from "../operators/IRect.js";
 import ICircle from "../operators/ICircle.js";
+import IText from "../operators/IText.js";
+import IPath from "../operators/IPath.js";
 
 
 export default class Editor {
@@ -12,21 +14,33 @@ export default class Editor {
 
         Bus.subscribe("editor/add/rect", this.addRect.bind(this))
         Bus.subscribe("editor/add/circle", this.addCircle.bind(this))
+        Bus.subscribe("editor/add/text", this.addText.bind(this))
+
+        Bus.subscribe("editor/drawing/start", () => {
+            this.canvas.isDrawingMode = true
+        })
+        Bus.subscribe("editor/drawing/end", () => {
+            this.canvas.isDrawingMode = false
+        })
 
         this.initializeCanvasEvents();
     }
 
     addRect(){
-        // add canvas a pipeline with a rectangle source in it
         this.addPipeline(new Pipeline([ 
             new IRect({left: 200, top: 200, width: 40, height: 40, fill: '#f6b73c'}) 
         ]))
     }
 
     addCircle(){
-        // add canvas a pipeline with a rectangle source in it
         this.addPipeline(new Pipeline([ 
             new ICircle({left: 200, top: 200, radius: 40, fill: '#f6b73c'}) 
+        ]))
+    }
+
+    addText(){
+        this.addPipeline(new Pipeline([ 
+            new IText("Hellow!", {left: 200, top: 200}) 
         ]))
     }
 
@@ -37,6 +51,12 @@ export default class Editor {
             r.pipeline = pipeline
             this.canvas.add(r)
           })
+    }
+
+    addPath(path){
+        this.addPipeline(new Pipeline([ 
+            new IPath(path, {}) 
+        ]))
     }
 
     initializeCanvasEvents(){
@@ -76,6 +96,16 @@ export default class Editor {
         canvas.on('object:rotating', (e) => {
             Bus.publish("editor/object/rotated", this.canvas.getActiveObject())
             console.log("object:scaling", e.target.scaleX, e.target.scaleY)
+        })
+
+        canvas.on('path:created', (e) => {
+            Bus.publish("editor/path/created", e)
+            console.log("path created", e)
+
+            this.canvas.remove(e.path)
+
+            // get the path 
+            this.addPath(e.path)
         })
     }
 }

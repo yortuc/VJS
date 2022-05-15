@@ -85,6 +85,15 @@ function ICircleInspector(flow){
   return <span><b>Circle</b> Circle source. </span>
 }
 
+function IPathInspector(flow){
+  return <span><b>Path</b> Path source. </span>
+}
+
+function ITextInspector(flow){
+  return <span><b>Text</b> 
+  <input type="text" style={{width: 270}} value={flow.text} onChange={(e)=> onFlowPropChange(flow, "text", e.target.value) }/> </span>
+}
+
 function ClonerInspector(flow, key){
   return (
     <span>
@@ -97,7 +106,6 @@ function ClonerInspector(flow, key){
       />
     </span>
   )
-
 }
 
 function ModifierInspector(flow, key){
@@ -140,6 +148,8 @@ function TransformInspector(flow){
 const opEditors = {
   IRect: IRectInspector,
   ICircle: ICircleInspector,
+  IText: ITextInspector,
+  IPath: IPathInspector,
   Cloner: ClonerInspector,
   Modifier: ModifierInspector,
   Transform: TransformInspector
